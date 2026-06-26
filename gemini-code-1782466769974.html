@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ms Lê Hằng English - Interactive Master Quiz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Quicksand:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #8854C0;
+            --accent-yellow: #FDCB6E;
+            --accent-cyan: #00C9A7;
+            --correct-color: #00D26A;
+            --correct-dark: #00A050;
+            --wrong-color: #FF4757;
+            --wrong-dark: #D63031;
+            --text-main: #2D3436;
+            --card-shadow: 0 8px 0px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Quicksand', 'Nunito', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(-45deg, #8854C0, #FDCB6E, #00C9A7, #FF7675);
+            background-size: 400% 400%;
+            animation: gradientMoving 16s ease infinite;
+            min-height: 100vh;
+            padding: 20px 10px;
+            color: var(--text-main);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        @keyframes gradientMoving {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .wrapper {
+            max-width: 780px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .author-tag {
+            font-size: 16px;
+            font-weight: 900;
+            color: white;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .exercise-title-banner {
+            background: #8854C0;
+            color: white;
+            padding: 14px;
+            border-radius: 15px;
+            margin: 30px 0 15px 0;
+            font-weight: 900;
+            font-size: 15px;
+            box-shadow: 0 4px 0 #6C3483;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .notice-box {
+            background: #FFF;
+            border: 3px solid #FF7675;
+            border-radius: 20px;
+            padding: 18px;
+            margin: 15px 0 25px 0;
+            box-shadow: 0 6px 0 #FF7675;
+            text-align: center;
+        }
+
+        .notice-box h3 {
+            color: #FF4757;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .notice-box p {
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.6;
+            color: #485460;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 22px;
+            padding: 22px;
+            margin-bottom: 22px;
+            border: 2px solid #E5E5E5;
+            box-shadow: var(--card-shadow);
+            position: relative;
+        }
+
+        .question-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .q-badge {
+            background: #8854C0;
+            color: white;
+            font-weight: 900;
+            padding: 4px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+        }
+
+        .q-text {
+            font-size: 16.5px;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid #E5E5E5;
+            border-bottom: 5px solid #E5E5E5;
+            border-radius: 16px;
+            padding: 12px 16px;
+            font-size: 15px;
+            font-weight: 700;
+            text-align: left;
+            cursor: pointer;
+            outline: none;
+            display: flex;
+            align-items: center;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        .option-btn:hover:not(.disabled) {
+            background-color: #F8F9FA;
+        }
+
+        .option-btn.correct {
+            background-color: #E8F5E9 !important;
+            border-color: var(--correct-color) !important;
+            border-bottom-color: var(--correct-dark) !important;
+            color: #1B5E20 !important;
+        }
+
+        .option-btn.wrong {
+            background-color: #FFEBEE !important;
+            border-color: var(--wrong-color) !important;
+            border-bottom-color: var(--wrong-dark) !important;
+            color: #B71C1C !important;
+        }
+
+        .option-btn.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .option-btn.correct.disabled, .option-btn.wrong.disabled {
+            opacity: 1;
+        }
+
+        .explanation-box {
+            background: #F9F6FF;
+            border-left: 6px solid #8854C0;
+            border-radius: 0 16px 16px 0;
+            padding: 16px;
+            margin-top: 18px;
+            display: none;
+        }
+
+        .exp-title {
+            color: #8854C0;
+            font-weight: 900;
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .exp-section {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+            color: #485460;
+        }
+
+        .submit-container {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .btn-submit-test {
+            background: #00C9A7;
+            color: white;
+            border: none;
+            border-bottom: 6px solid #00A88F;
+            border-radius: 20px;
+            padding: 16px 45px;
+            font-size: 19px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(0,201,167,0.3);
+        }
+
+        .score-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 28px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            border: 4px solid #FDCB6E;
+        }
+
+        .score-number {
+            font-size: 46px;
+            font-weight: 900;
+            color: #00D26A;
+            margin-bottom: 15px;
+        }
+
+        .teacher-comment {
+            font-size: 15px;
+            font-weight: 700;
+            color: #485460;
+            line-height: 1.6;
+            background: #F9F6FF;
+            padding: 15px;
+            border-radius: 16px;
+            border-left: 4px solid #8854C0;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .btn-close-modal {
+            background: #FF7675;
+            color: white;
+            border: none;
+            border-bottom: 4px solid #E66767;
+            padding: 10px 25px;
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 998;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="wrapper">
+        <header>
+            <div class="author-tag">Giáo viên tạo: Ms Lê Hằng English</div>
+        </header>
+
+        <div class="notice-box">
+            <h3>⚠️ HƯỚNG DẪN LÀM BÀI ⚠️</h3>
+            <p>Học sinh click chọn đáp án đúng nhất. Hãy đọc kỹ phần giải thích chi tiết xuất hiện ngay bên dưới để ghi nhớ sâu sắc các cấu trúc so sánh cốt lõi!</p>
+        </div>
+
+        <div id="quiz-root"></div>
+
+        <div class="submit-container">
+            <button class="btn-submit-test" onclick="evaluateQuizTotal()">NỘP BÀI TỔNG KẾT ĐIỂM 🏆</button>
+        </div>
+    </div>
+
+    <div class="score-modal" id="scoreModal">
+        <div class="modal-content">
+            <div style="font-size:22px; font-weight:900; color:#8854C0; margin-bottom:10px;">✨ Kết Quả Bài Làm ✨</div>
+            <div class="score-number" id="modalScoreText">0/0</div>
+            <div class="teacher-comment" id="modalCommentText"></div>
+            <button class="btn-close-modal" onclick="resetQuizAndRestart()">Làm Lại Bài 🔄</button>
+        </div>
+    </div>
+
+    <script>
+        const rawQuizDatabase = [
+            /* EXERCISE 15 */
+            {
+                exTitle: "Exercise 15: Rearrange the words and phrases to make meaningful sentences.",
+                question: "Sắp xếp các từ: <b>\"the food / friendlier, / here / are / The people / better than/ other places/ in / and / is /.\"</b>",
+                options: [
+                    { text: "The people here are friendlier, and the food is better than in other places.", isCorrect: true },
+                    { text: "The people here are better than friendlier, and the food is in other places.", isCorrect: false },
+                    { text: "The food here is friendlier, and the people are better than in other places.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Chủ ngữ số nhiều 'The people here' đi với 'are friendlier', chủ ngữ không đếm được 'the food' đi với 'is better than...'.",
+                    translation: "Con người ở đây thân thiện hơn, và đồ ăn thì ngon hơn ở những nơi khác.",
+                    whyCorrect: "Các vế câu được ghép nối một cách logic, chính xác về mặt ý nghĩa ngữ cảnh và quy tắc ngữ pháp danh từ tương ứng.",
+                    whyWrong: "Các phương án gây nhiễu gán sai tính từ mô tả ('food' không thể 'friendlier' - thân thiện)."
+                }
+            },
+            {
+                exTitle: "Exercise 15: Rearrange the words and phrases to make meaningful sentences.",
+                question: "Sắp xếp các từ: <b>\"two things / my neighbourhood / However, / dislike / I / there are / about /.\"</b>",
+                options: [
+                    { text: "However, there are two things I dislike about my neighbourhood.", isCorrect: true },
+                    { text: "There are two things I dislike about my neighbourhood however.", isCorrect: false },
+                    { text: "However, I dislike about my neighbourhood there are two things.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Trạng từ liên kết nghịch đối 'However' (Tuy nhiên) đứng đầu câu, theo sau bởi dấu phẩy. Mệnh đề quan hệ rút gọn: 'two things [that] I dislike about...'.",
+                    translation: "Tuy nhiên, có hai điều mà tớ không thích về khu phố của tớ.",
+                    whyCorrect: "Đúng vị trí của trạng từ kết nối và trật tự cấu trúc tồn tại 'There are + N'.",
+                    whyWrong: "Phương án nhiễu phá vỡ trật tự cấu trúc ngữ pháp khiến câu vô nghĩa."
+                }
+            },
+            {
+                exTitle: "Exercise 15: Rearrange the words and phrases to make meaningful sentences.",
+                question: "Sắp xếp các từ: <b>\"like / many things / about / neighbourhood / There are/ I / my/.\"</b>",
+                options: [
+                    { text: "There are many things I like about my neighbourhood.", isCorrect: true },
+                    { text: "I like many things about there are my neighbourhood.", isCorrect: false },
+                    { text: "There are my neighbourhood many things I like about.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Cấu trúc: There are + N số nhiều + (S + V) + about... (Có nhiều điều tớ thích về...)",
+                    translation: "Có rất nhiều điều tớ thích về khu phố của mình.",
+                    whyCorrect: "Sắp xếp đúng đại từ quan hệ rút gọn làm rõ nghĩa cho 'many things'.",
+                    whyWrong: "Cố tình nhồi nhét cụm 'there are' vào sai vị trí cú pháp câu."
+                }
+            },
+            {
+                exTitle: "Exercise 15: Rearrange the words and phrases to make meaningful sentences.",
+                question: "Sắp xếp các từ: <b>\"in Ha Noi/ less delicious / The seafood / more expensive / is / that in Nha Trang/ and / than /.\"</b>",
+                options: [
+                    { text: "The seafood in Ha Noi is less delicious and more expensive than that in Nha Trang.", isCorrect: true },
+                    { text: "The seafood in Ha Noi is less delicious and more expensive than Nha Trang.", isCorrect: false },
+                    { text: "The seafood in Nha Trang is less delicious and more expensive than Ha Noi.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Đại từ thay thế 'that' dùng cho danh từ không đếm được 'the seafood' nhằm tránh lặp từ.",
+                    translation: "Hải sản ở Hà Nội ít ngon hơn và đắt hơn hải sản ở Nha Trang.",
+                    whyCorrect: "Cấu trúc so sánh hơn song hành hai tính từ có từ thay thế 'that in' rất chính xác về mặt học thuật.",
+                    whyWrong: "Nếu không có 'that in', câu sẽ bị lỗi so sánh khập khiễng giữa 'hải sản' và 'thành phố Nha Trang'."
+                }
+            },
+            {
+                exTitle: "Exercise 15: Rearrange the words and phrases to make meaningful sentences.",
+                question: "Sắp xếp các từ: <b>\"busy and crowded, / / and / The streets / quite polluted / are / is /.\"</b>",
+                options: [
+                    { text: "The streets are busy and crowded, and the air is quite polluted.", isCorrect: true },
+                    { text: "The air is busy and crowded, and the streets are quite polluted.", isCorrect: false },
+                    { text: "The streets are quite polluted, and the air is busy and crowded.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "The streets (Đường phố) đi với tính từ 'busy and crowded' (bận rộn, đông đúc). The air (Không khí) đi với 'polluted' (ô nhiễm).",
+                    translation: "Đường phố thì bận rộn và đông đúc, còn không khí thì khá ô nhiễm.",
+                    whyCorrect: "Tính từ bổ nghĩa hoàn toàn logic với ngữ nghĩa của danh từ làm chủ ngữ.",
+                    whyWrong: "Ghép sai tính từ với danh từ (Không khí không thể 'đông đúc')."
+                }
+            },
+            {
+                exTitle: "Exercise 15: Rearrange the words and phrases to make meaningful sentences.",
+                question: "Sắp xếp các từ: <b>\"Da Nang / noisier / The streets / than those in Hue / are / crowded / in / and / more /.\"</b>",
+                options: [
+                    { text: "The streets in Da Nang are noisier and more crowded than those in Hue.", isCorrect: true },
+                    { text: "The streets in Da Nang are noisier and more crowded than that in Hue.", isCorrect: false },
+                    { text: "The streets in Hue are noisier and more crowded than those in Da Nang.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Đại từ số nhiều 'those' được sử dụng chuẩn xác để thay thế cho danh từ số nhiều 'the streets'.",
+                    translation: "Đường phố ở Đà Nẵng ồn ào và đông đúc hơn đường phố ở Huế.",
+                    whyCorrect: "Áp dụng đúng đại từ thay thế 'those in Hue' tương thích hoàn hảo với danh từ số nhiều 'The streets'.",
+                    whyWrong: "Dùng từ 'that' là sai vì 'that' chỉ thay thế cho danh từ số ít hoặc không đếm được."
+                }
+            },
+            {
+                exTitle: "Exercise 15: Rearrange the words and phrases to make meaningful sentences.",
+                question: "Sắp xếp các từ: <b>\"going/ going/ by/ by/ car/ bicycle/ than/ is/ faster\"</b>",
+                options: [
+                    { text: "Going by car is faster than going by bicycle.", isCorrect: true },
+                    { text: "Going by bicycle is faster than going by car.", isCorrect: false },
+                    { text: "Going by car is than going by bicycle faster.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Cấu trúc danh động từ làm chủ ngữ: V-ing + by + phương tiện. So sánh hơn tính từ ngắn: adj-er + than.",
+                    translation: "Đi bằng ô tô thì nhanh hơn đi bằng xe đạp.",
+                    whyCorrect: "Đúng ngữ pháp cấu trúc so sánh hơn và thực tế đời sống xã hội.",
+                    whyWrong: "Sai logic thực tế hoặc sai vị trí từ 'than' đứng trước tính từ."
+                }
+            },
+            {
+                exTitle: "Exercise 15: Rearrange the words and phrases to make meaningful sentences.",
+                question: "Sắp xếp các từ: <b>\"street/ there/ is/ post office/ at/ corner/ a/ the/ of/ the\"</b>",
+                options: [
+                    { text: "There is a post office at the corner of the street.", isCorrect: true },
+                    { text: "There is the post office at a corner of a street.", isCorrect: false },
+                    { text: "At the corner of the street is there a post office.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Cụm từ cố định: at the corner of the street (ở góc của con phố). Cấu trúc: There is + danh từ số ít.",
+                    translation: "Có một bưu điện ở ngay góc phố.",
+                    whyCorrect: "Áp dụng mạo từ bất định 'a post office' chính xác cho vật được nhắc tới lần đầu và cấu trúc chỉ vị trí.",
+                    whyWrong: "Sai vị trí cấu trúc câu khẳng định 'There is'."
+                }
+            },
+            {
+                exTitle: "Exercise 15: Rearrange the words and phrases to make meaningful sentences.",
+                question: "Sắp xếp các từ: <b>\"this/ we/ shall/ what/ do/ Saturday evening?\"</b>",
+                options: [
+                    { text: "What shall we do this Saturday evening?", isCorrect: true },
+                    { text: "What we shall do this Saturday evening?", isCorrect: false },
+                    { text: "Shall what we do this Saturday evening?", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Cấu trúc gợi ý, hỏi ý kiến: What + shall + we + V-inf?",
+                    translation: "Chúng mình sẽ làm gì vào tối thứ Bảy này đây?",
+                    whyCorrect: "Trợ động từ 'shall' được đảo lên trước chủ ngữ 'we' trong câu hỏi Wh-word.",
+                    whyWrong: "Các phương án nhiễu bị lỗi trật tự từ nghiêm trọng trong câu nghi vấn."
+                }
+            },
+            {
+                exTitle: "Exercise 15: Rearrange the words and phrases to make meaningful sentences.",
+                question: "Sắp xếp các từ: <b>\"in/ is/ suburbs/ Da Nang City/ my neighbourhood/ the/ of\"</b>",
+                options: [
+                    { text: "My neighbourhood is in the suburbs of Da Nang City.", isCorrect: true },
+                    { text: "The suburbs of Da Nang City is in my neighbourhood.", isCorrect: false },
+                    { text: "My neighbourhood in the suburbs is of Da Nang City.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Cụm danh từ: in the suburbs of + somewhere (ở khu vực ngoại ô của nơi nào).",
+                    translation: "Khu phố của tớ nằm ở vùng ngoại ô của Thành phố Đà Nẵng.",
+                    whyCorrect: "Xác định đúng chủ ngữ chính là khu phố và vị trí địa lý của nó.",
+                    whyWrong: "Đảo lộn ý nghĩa câu khiến nội dung logic bị sai hoàn toàn."
+                }
+            },
+            {
+                exTitle: "Exercise 15: Rearrange the words and phrases to make meaningful sentences.",
+                question: "Sắp xếp các từ: <b>\"me/ you/ can/ the/ to/ tell/ way/ Ben Thanh Market?\"</b>",
+                options: [
+                    { text: "Can you tell me the way to Ben Thanh Market?", isCorrect: true },
+                    { text: "Can you show me how to get Ben Thanh Market?", isCorrect: false },
+                    { text: "Tell me can you the way to Ben Thanh Market?", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Cấu trúc hỏi đường lịch sự: Can/Could you tell me the way to + N?",
+                    translation: "Bạn có thể chỉ cho tôi đường đến Chợ Bến Thành không?",
+                    whyCorrect: "Đúng cấu trúc câu hỏi có chứa động từ khuyết thiếu 'Can'.",
+                    whyWrong: "Nếu dùng 'how to get' thì bắt buộc phải có giới từ 'to' ('how to get to')."
+                }
+            },
+            {
+                exTitle: "Exercise 15: Rearrange the words and phrases to make meaningful sentences.",
+                question: "Sắp xếp các từ: <b>\"The / very / friendly / are / here / and / helpful / people /.\"</b>",
+                options: [
+                    { text: "The people here are very friendly and helpful.", isCorrect: true },
+                    { text: "The friendly people here are very helpful.", isCorrect: false },
+                    { text: "The people are very friendly and helpful here.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Cụm danh từ làm chủ ngữ: The people here (Người dân nơi đây).",
+                    translation: "Con người ở đây rất thân thiện và hay giúp đỡ mọi người.",
+                    whyCorrect: "Trạng từ chỉ nơi chốn 'here' đứng ngay sau danh từ làm rõ nghĩa, các tính từ kết nối bằng 'and' bổ nghĩa sau 'to be'.",
+                    whyWrong: "Phương án nhiễu thay đổi vị trí từ 'here' làm câu kém tự nhiên hơn cấu trúc gốc."
+                }
+            },
+            {
+                exTitle: "Exercise 15: Rearrange the words and phrases to make meaningful sentences.",
+                question: "Sắp xếp các từ: <b>\"dinner? / we/ go/ shall/ to/ the/ cinema/ after/\"</b>",
+                options: [
+                    { text: "Shall we go to the cinema after dinner?", isCorrect: true },
+                    { text: "Shall we go to cinema after the dinner?", isCorrect: false },
+                    { text: "After dinner shall to the cinema we go?", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Cụm từ: go to the cinema (đi xem phim). Cụm trạng ngữ thời gian: after dinner (sau bữa tối - không dùng mạo từ trước bữa ăn chính).",
+                    translation: "Chúng mình đi xem phim sau bữa tối nhé?",
+                    whyCorrect: "Tuân thủ chặt chẽ trật tự cấu trúc đề xuất hành động 'Shall we + V-inf'.",
+                    whyWrong: "Sử dụng sai mạo từ 'the' trước danh từ chỉ bữa ăn 'dinner' hoặc đảo vị trí động từ sai quy tắc."
+                }
+            },
+            {
+                exTitle: "Exercise 15: Rearrange the words and phrases to make meaningful sentences.",
+                question: "Sắp xếp các từ: <b>\"is/ Ho Chi Minh City/ busy and crowded/ for/ too/ me\"</b>",
+                options: [
+                    { text: "Ho Chi Minh City is too busy and crowded for me.", isCorrect: true },
+                    { text: "Ho Chi Minh City is busy and too crowded for me.", isCorrect: false },
+                    { text: "Ho Chi Minh City too is busy and crowded for me.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Cấu trúc quá... đối với ai: S + be + too + adj + for somebody.",
+                    translation: "Thành phố Hồ Chí Minh quá bận rộn và đông đúc đối với tôi.",
+                    whyCorrect: "Đặt phó từ chỉ mức độ 'too' ngay trước cặp tính từ liên kết.",
+                    whyWrong: "Đặt từ 'too' sai vị trí trước động từ hoặc chen giữa hai tính từ."
+                }
+            },
+            {
+                exTitle: "Exercise 15: Rearrange the words and phrases to make meaningful sentences.",
+                question: "Sắp xếp các từ: <b>\"It’s / because / big supermarket / very convenient / there is a / near my house /.\"</b>",
+                options: [
+                    { text: "It's very convenient because there is a big supermarket near my house.", isCorrect: true },
+                    { text: "Because there is a big supermarket near my house it's very convenient.", isCorrect: false },
+                    { text: "It's near my house very convenient because there is a big supermarket.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Mệnh đề nguyên nhân: Clause 1 + because + Clause 2 (Chỉ nguyên nhân lý do).",
+                    translation: "Nơi này rất thuận tiện vì có một siêu thị lớn ở gần nhà tớ.",
+                    whyCorrect: "Mạch câu logic, từ nối 'because' liên kết hai mệnh đề rành mạch.",
+                    whyWrong: "Phương án hai thiếu dấu phẩy ngăn cách nếu đưa 'Because' lên đầu câu."
+                }
+            },
+
+            /* EXERCISE 16 */
+            {
+                exTitle: "Exercise 16: Write the full sentences use the words given.",
+                question: "Dựng câu: <b>\"people/ your/ city/ friendly/ and/ open/ than/ many/ other/ place.\"</b>",
+                options: [
+                    { text: "The people in your city are friendlier than those in many other places.", isCorrect: true },
+                    { text: "The people in your city is friendlier than many other place.", isCorrect: false },
+                    { text: "People in your city are more friendly than other places.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Dạng so sánh hơn của tính từ kết thúc bằng đuôi '-y': friendly ➔ friendlier. Sử dụng 'those' thay thế danh từ 'the people'.",
+                    translation: "Người dân ở thành phố của bạn thân thiện và cởi mở hơn người dân ở nhiều nơi khác.",
+                    whyCorrect: "Chia đúng động từ 'are' theo chủ ngữ số nhiều, đổi dạng so sánh hơn đặc biệt của 'friendly' thành 'friendlier'.",
+                    whyWrong: "Dùng sai động từ số ít 'is' hoặc thiếu đại từ thay thế cấu trúc gây lỗi so sánh lệch."
+                }
+            },
+            {
+                exTitle: "Exercise 16: Write the full sentences use the words given.",
+                question: "Dựng câu: <b>\"one/ thing/ not like/ new neighbourhood/ that/ it/ very/ noisy/.\"</b>",
+                options: [
+                    { text: "One thing I don't like about my new neighbourhood is that it is very noisy.", isCorrect: true },
+                    { text: "One thing I not like new neighbourhood is that it very noisy.", isCorrect: false },
+                    { text: "One thing I don't like about my new neighbourhood is that it very noisy.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Cấu trúc: One thing + S + don't like + about + N + is that + mệnh đề.",
+                    translation: "Một điều tớ không thích về khu phố mới của mình là nó rất ồn ào.",
+                    whyCorrect: "Có đầy đủ trợ động từ phủ định 'don't', giới từ 'about' và động từ 'to be' trong mệnh đề phụ.",
+                    whyWrong: "Thiếu động từ liên kết 'is' đứng trước tính từ 'noisy'."
+                }
+            },
+            {
+                exTitle: "Exercise 16: Write the full sentences use the words given.",
+                question: "Dựng câu nghi vấn: <b>\"weather/ here/ hot/ and/ dry/ than/ your/ country/?\"</b>",
+                options: [
+                    { text: "Is the weather here hotter and drier than that in your country?", isCorrect: true },
+                    { text: "Does the weather here hotter and drier than your country?", isCorrect: false },
+                    { text: "Is the weather here more hot and dry than that in your country?", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Quy tắc gấp đôi phụ âm cuối trước khi thêm '-er': hot ➔ hotter. Tính từ đuôi '-y': dry ➔ drier. Đại từ thay thế số ít: 'that in'.",
+                    translation: "Thời tiết ở đây nóng hơn và khô hơn thời tiết ở quốc gia của bạn phải không?",
+                    whyCorrect: "Sử dụng đúng cấu trúc so sánh hơn của tính từ ngắn và đại từ thay thế 'that in'.",
+                    whyWrong: "Mượn trợ động từ 'Does' sai quy tắc đối với câu tính từ hoặc biến đổi 'more hot' sai quy tắc."
+                }
+            },
+            {
+                exTitle: "Exercise 16: Write the full sentences use the words given.",
+                question: "Dựng câu: <b>\"one/ good/ things/ live/ neighbourhood/ that/ food/ cheap/.\"</b>",
+                options: [
+                    { text: "One of the good things about living in my neighbourhood is that the food is very cheap.", isCorrect: true },
+                    { text: "One good thing about live in my neighbourhood is that food cheap.", isCorrect: false },
+                    { text: "One of the good things about living in my neighbourhood is that the food cheap.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Cấu trúc: One of the + N số nhiều. Sau giới từ 'about' + V-ing (living).",
+                    translation: "Một trong những điều tốt đẹp khi sống ở khu phố của tớ là đồ ăn rất rẻ.",
+                    whyCorrect: "Tuân thủ chuẩn xác cụm danh từ chỉ lượng và cấu trúc ngữ pháp nâng cao.",
+                    whyWrong: "Bỏ quên động từ liên kết 'is' bổ nghĩa cho tính từ 'cheap' ở cuối vế câu."
+                }
+            },
+            {
+                exTitle: "Exercise 16: Write the full sentences use the words given.",
+                question: "Dựng câu: <b>\"there/ be/ many/ new/ shop/ near/ here/ so/ streets/ busy/ day/.\"</b>",
+                options: [
+                    { text: "There are many new shops near here so the streets are busy during the day.", isCorrect: true },
+                    { text: "There is many new shop near here so the streets are busy day.", isCorrect: false },
+                    { text: "There are many new shops near here so streets are busy at day.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Cụm từ chỉ thời gian: during the day (trong suốt cả ngày). Cấu trúc: There are + danh từ đếm được số nhiều.",
+                    translation: "Có rất nhiều cửa hàng mới ở gần đây nên đường phố luôn bận rộn suốt cả ngày.",
+                    whyCorrect: "Thêm đuôi số nhiều cho danh từ 'shops' và mạo từ xác định 'the streets' cùng trạng ngữ thời gian chính xác.",
+                    whyWrong: "Dùng sai động từ tobe 'There is' với danh từ số nhiều 'many new shops'."
+                }
+            },
+
+            /* EXERCISE 17 */
+            {
+                exTitle: "Exercise 17: For each question, complete the second sentence so that it means the same as the first. Use the word in brackets.",
+                question: "Viết lại câu sử dụng từ trong ngoặc: <b>\"Life is more convenient in the city centre than in the suburbs.\"</b> (Dùng từ: <b>less</b>)",
+                options: [
+                    { text: "It is less convenient to live in the suburbs than in the city centre.", isCorrect: true },
+                    { text: "Life in the city centre is less convenient than in the suburbs.", isCorrect: false },
+                    { text: "It is less convenient to live in the city centre than in the suburbs.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Cấu trúc so sánh kém hơn: S + be + less + tính từ + than... Đổi ngược chủ ngữ.",
+                    translation: "Sống ở vùng ngoại ô thì ít thuận tiện hơn là sống ở trung tâm thành phố.",
+                    whyCorrect: "Sử dụng cấu trúc chủ ngữ giả 'It is less + adj + to-V' kết hợp đảo vị trí nơi chốn để câu đồng nghĩa.",
+                    whyWrong: "Phương án nhiễu giữ nguyên trật tự nơi chốn làm câu bị biến đổi ngược hoàn toàn về mặt ngữ nghĩa gốc."
+                }
+            },
+            {
+                exTitle: "Exercise 17: For each question, complete the second sentence so that it means the same as the first. Use the word in brackets.",
+                question: "Viết lại câu sử dụng từ trong ngoặc: <b>\"Their neighbourhood is not as clean as my neighbourhood.\"</b> (Dùng từ: <b>polluted</b>)",
+                options: [
+                    { text: "Their neighbourhood is more polluted than mine.", isCorrect: true },
+                    { text: "My neighbourhood is more polluted than theirs.", isCorrect: false },
+                    { text: "Their neighbourhood is as polluted as mine.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Đại từ sở hữu: mine = my neighbourhood; theirs = their neighbourhood. Tính từ trái nghĩa: clean (sạch) ➔ polluted (ô nhiễm).",
+                    translation: "Khu phố của họ thì ô nhiễm hơn khu phố của tớ.",
+                    whyCorrect: "Khi chuyển sang tính từ trái nghĩa, chủ ngữ 'Their neighbourhood' giữ nguyên đầu câu làm rõ nghĩa so sánh hơn.",
+                    whyWrong: "Bị sai lệch đối tượng so sánh khiến nghĩa bị ngược hoàn toàn."
+                }
+            },
+            {
+                exTitle: "Exercise 17: For each question, complete the second sentence so that it means the same as the first. Use the word in brackets.",
+                question: "Viết lại câu sử dụng từ trong ngoặc: <b>\"There are more high-rise buildings in Shanghai than in Ha Noi.\"</b> (Dùng từ: <b>modern</b>)",
+                options: [
+                    { text: "Shanghai is more modern than Ha Noi.", isCorrect: true },
+                    { text: "Ha Noi is more modern than Shanghai.", isCorrect: false },
+                    { text: "Shanghai has more modern than Ha Noi.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Nhiều nhà cao tầng đồng nghĩa với tính từ hiện đại (modern). Cấu trúc so sánh hơn tính từ dài: more + adj + than.",
+                    translation: "Thượng Hải hiện đại hơn Hà Nội.",
+                    whyCorrect: "Chuyển từ cấu trúc số lượng danh từ 'There are more' sang cấu trúc so sánh tính chất của địa danh chuẩn xác.",
+                    whyWrong: "Sai cấu trúc động từ 'has more modern' (sau has/have phải đi kèm cụm danh từ)."
+                }
+            },
+            {
+                exTitle: "Exercise 17: For each question, complete the second sentence so that it means the same as the first. Use the word in brackets.",
+                question: "Viết lại câu sử dụng từ trong ngoặc: <b>\"I like my neighbourhood most because other places are not as peaceful.\"</b> (Dùng từ: <b>as</b>)",
+                options: [
+                    { text: "No other place is as peaceful as my neighbourhood.", isCorrect: true },
+                    { text: "No other place is more peaceful as my neighbourhood.", isCorrect: false },
+                    { text: "My neighbourhood is not as peaceful as other places.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Mô hình viết lại câu so sánh nhất bằng cấu trúc so sánh bằng phủ định tuyệt đối: No other + N số ít + is + as + adj + as + N chính.",
+                    translation: "Không một nơi nào khác yên bình bằng khu phố của tớ.",
+                    whyCorrect: "Áp dụng cấu trúc 'as peaceful as' kết hợp chủ ngữ phủ định tạo nghĩa so sánh tuyệt đối.",
+                    whyWrong: "Cố tình viết sai ngữ pháp hỗn hợp 'more peaceful as'."
+                }
+            },
+            {
+                exTitle: "Exercise 17: For each question, complete the second sentence so that it means the same as the first. Use the word in brackets.",
+                question: "Viết lại câu sử dụng từ trong ngoặc: <b>\"Cua Lo is closer to Ha Noi than Hue.\"</b> (Dùng từ: <b>far</b>)",
+                options: [
+                    { text: "Hue is farther / further from Ha Noi than Cua Lo.", isCorrect: true },
+                    { text: "Hue is farer from Ha Noi than Cua Lo.", isCorrect: false },
+                    { text: "Ha Noi is farther from Hue than Cua Lo.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Dạng so sánh hơn bất quy tắc: far ➔ farther/further. Cấu trúc: far from somewhere (xa nơi nào).",
+                    translation: "Huế thì nằm cách xa Hà Nội hơn là Cửa Lò.",
+                    whyCorrect: "Đổi tính từ trái nghĩa 'close to' thành 'farther from' đồng thời đảo ngược đối tượng so sánh chính xác.",
+                    whyWrong: "Từ 'farer' không tồn tại trong hệ thống tiếng Anh học thuật."
+                }
+            },
+
+            /* EXERCISE 18 */
+            {
+                exTitle: "Exercise 18: Combine the two sentences using comparative adjective in brackets",
+                question: "Kết hợp câu: <b>\"The road systems in developed countries are much better than those in developing countries.\"</b> (Dùng từ: <b>bad</b>)",
+                options: [
+                    { text: "The road systems in developing countries are worse than those in developed ones.", isCorrect: true },
+                    { text: "The road systems in developing countries are badder than those in developed ones.", isCorrect: false },
+                    { text: "The road systems in developing countries are worse than that in developed countries.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Tính từ bất quy tắc: bad ➔ worse (tệ hơn). Từ hạn định thay thế tránh trùng lặp: 'ones' thay cho 'countries'.",
+                    translation: "Hệ thống đường giao thông ở các nước đang phát triển thì tệ hơn hệ thống ở các nước đã phát triển.",
+                    whyCorrect: "Sử dụng đúng biến đổi hình thái 'worse' và đại từ số nhiều 'those' thay thế danh từ 'the road systems'.",
+                    whyWrong: "'badder' sai hoàn toàn; dùng 'that' sai lỗi hòa hợp số lượng danh từ."
+                }
+            },
+            {
+                exTitle: "Exercise 18: Combine the two sentences using comparative adjective in brackets",
+                question: "Kết hợp câu: <b>\"A hotel room costs $20 a night. A guesthouse room costs $15 a night.\"</b> (Dùng từ: <b>cheap</b>)",
+                options: [
+                    { text: "A guesthouse room is cheaper than a hotel room.", isCorrect: true },
+                    { text: "A hotel room is cheaper than a guesthouse room.", isCorrect: false },
+                    { text: "A guesthouse room is more cheap than a hotel room.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Tính từ ngắn: cheap ➔ cheaper. Phân tích giá cả: $15 rẻ hơn $20.",
+                    translation: "Một phòng nhà nghỉ thì rẻ hơn một phòng khách sạn.",
+                    whyCorrect: "So sánh chính xác giá trị toán học của hai đối tượng bằng tính từ ngắn thêm đuôi '-er'.",
+                    whyWrong: "Ngược nghĩa giá trị hoặc biến đổi 'more cheap' sai quy tắc tính từ ngắn."
+                }
+            },
+            {
+                exTitle: "Exercise 18: Combine the two sentences using comparative adjective in brackets",
+                question: "Kết hợp câu: <b>\"Martin's house is $100,000. Henry's house is $150,000.\"</b> (Dùng từ: <b>expensive</b>)",
+                options: [
+                    { text: "Henry's house is more expensive than Martin's house.", isCorrect: true },
+                    { text: "Martin's house is more expensive than Henry's house.", isCorrect: false },
+                    { text: "Henry's house is expensiver than Martin's house.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Tính từ dài: expensive ➔ more expensive than. Giá trị: $150,000 đắt hơn $100,000.",
+                    translation: "Nhà của Henry thì đắt tiền hơn nhà của Martin.",
+                    whyCorrect: "Tuân thủ quy tắc thêm 'more' đứng trước tính từ dài gồm 3 âm tiết trở lên.",
+                    whyWrong: "Thêm đuôi '-er' vào sau tính từ dài ('expensiver') là lỗi cơ bản."
+                }
+            },
+            {
+                exTitle: "Exercise 18: Combine the two sentences using comparative adjective in brackets",
+                question: "Kết hợp câu: <b>\"This valley is about 300m deep. That valley is about 310m deep.\"</b> (Dùng từ: <b>deep</b>)",
+                options: [
+                    { text: "That valley is deeper than this valley.", isCorrect: true },
+                    { text: "This valley is deeper than that valley.", isCorrect: false },
+                    { text: "That valley is more deep than this valley.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Tính từ ngắn: deep ➔ deeper than. Số đo: 310m sâu hơn 300m.",
+                    translation: "Thung lũng kia thì sâu hơn thung lũng này.",
+                    whyCorrect: "Ghép đúng chủ ngữ có số đo lớn hơn làm chủ thể so sánh hơn với tính từ ngắn.",
+                    whyWrong: "Sai lệch số đo thực tế của đề bài hoặc dùng từ 'more' sai ngữ pháp."
+                }
+            },
+            {
+                exTitle: "Exercise 18: Combine the two sentences using comparative adjective in brackets",
+                question: "Kết hợp câu: <b>\"This square is about 7,500m2. That square is about 7,000m2.\"</b> (Dùng từ: <b>big</b>)",
+                options: [
+                    { text: "This square is bigger than that square.", isCorrect: true },
+                    { text: "That square is bigger than this square.", isCorrect: false },
+                    { text: "This square is more big than that square.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Quy tắc gấp đôi phụ âm cuối trước khi thêm đuôi '-er': big ➔ bigger than. Diện tích: 7,500m2 lớn hơn 7,000m2.",
+                    translation: "Quảng trường này thì lớn hơn quảng trường kia.",
+                    whyCorrect: "Nhân đôi phụ âm 'g' và đặt đúng đối tượng có diện tích lớn hơn lên làm chủ ngữ chính.",
+                    whyWrong: "Quên nhân đôi phụ âm hoặc đảo lộn số liệu đo lường thực tế."
+                }
+            },
+            {
+                exTitle: "Exercise 18: Combine the Two Sentences...",
+                question: "Kết hợp câu: <b>\"Her mother is 37 years old. Her father is 38 years old.\"</b> (Dùng từ: <b>old</b>)",
+                options: [
+                    { text: "Her father is older than her mother.", isCorrect: true },
+                    { text: "Her mother is older than her father.", isCorrect: false },
+                    { text: "Her father is more old than her mother.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Tính từ ngắn: old ➔ older. Tuổi tác: 38 tuổi lớn hơn 37 tuổi.",
+                    translation: "Bố của cô ấy thì lớn tuổi hơn mẹ của cô ấy.",
+                    whyCorrect: "Sắp xếp đối tượng nhiều tuổi hơn đứng đầu câu làm chủ ngữ.",
+                    whyWrong: "Lệch thông tin logic tuổi tác của hai nhân vật hoặc sai hình thái từ."
+                }
+            },
+            {
+                exTitle: "Exercise 18: Combine the Two Sentences...",
+                question: "Kết hợp câu: <b>\"Our building has 33 floors. Their building has 15 floors.\"</b> (Dùng từ: <b>tall</b>)",
+                options: [
+                    { text: "Our building is taller than their building.", isCorrect: true },
+                    { text: "Their building is taller than our building.", isCorrect: false },
+                    { text: "Our building is more tall than their building.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Tính từ ngắn: tall ➔ taller. Số tầng: 33 tầng cao hơn 15 tầng.",
+                    translation: "Tòa nhà của chúng tôi thì cao hơn tòa nhà của họ.",
+                    whyCorrect: "Sử dụng tính từ ngắn thêm đuôi '-er' chính xác theo số lượng tầng nhà.",
+                    whyWrong: "Nhận định tòa nhà 15 tầng cao hơn tòa nhà 33 tầng là sai thực tế."
+                }
+            },
+            {
+                exTitle: "Exercise 18: Combine the Two Sentences...",
+                question: "Kết hợp câu: <b>\"My house is 3km from school. His house is 5km from school.\"</b> (Dùng từ: <b>far</b>)",
+                options: [
+                    { text: "His house is further/farther from school than my house.", isCorrect: true },
+                    { text: "My house is further/farther from school than his house.", isCorrect: false },
+                    { text: "His house is farer from school than my house.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Far biến đổi thành dạng so sánh đặc biệt là 'further' hoặc 'farther'. Khoảng cách: 5km xa hơn 3km.",
+                    translation: "Nhà của cậu ấy thì xa trường học hơn nhà của tớ.",
+                    whyCorrect: "Sắp xếp đúng chủ ngữ có khoảng cách đo đạc lớn hơn đứng đầu câu so sánh hơn.",
+                    whyWrong: "Dạng biến đổi 'farer' không tồn tại trong ngữ pháp tiếng Anh chính thống."
+                }
+            },
+
+            /* EXERCISE 19 */
+            {
+                exTitle: "Exercise 19: Rewrite each sentence so that it is closest in meaning to the original one.",
+                question: "Viết lại câu tương đương: <b>\"Hoa is taller than Chau.\"</b><br>🡲 Chau is _____________",
+                options: [
+                    { text: "shorter than Hoa.", isCorrect: true },
+                    { text: "more short than Hoa.", isCorrect: false },
+                    { text: "tallier than Hoa.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Tính từ trái nghĩa: tall (cao) ➔ short (thấp). Dạng so sánh hơn: short ➔ shorter.",
+                    translation: "Châu thì thấp hơn Hoa.",
+                    whyCorrect: "Đổi cặp tính từ trái nghĩa ngắn chuẩn xác và thêm đuôi '-er' theo quy tắc.",
+                    whyWrong: "Dùng từ 'more short' hoặc biến đổi sai hình thái từ gốc."
+                }
+            },
+            {
+                exTitle: "Exercise 19: Rewrite each sentence so that it is closest in meaning to the original one.",
+                question: "Viết lại câu tương đương: <b>\"The museum is bigger than the art gallery.\"</b><br>🡲 The art gallery is _____________",
+                options: [
+                    { text: "smaller than the museum.", isCorrect: true },
+                    { text: "more small than the museum.", isCorrect: false },
+                    { text: "biggers than the museum.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Tính từ trái nghĩa kích thước: big (to lớn) ➔ small (nhỏ bé).",
+                    translation: "Phòng trưng bày nghệ thuật thì nhỏ hơn bảo tàng.",
+                    whyCorrect: "Sử dụng tính từ ngắn trái nghĩa 'smaller than' thích hợp khi đảo vị trí chủ ngữ.",
+                    whyWrong: "Tính từ ngắn không kết hợp phó từ 'more' trong cấu trúc so sánh hơn đơn thuần."
+                }
+            },
+            {
+                exTitle: "Exercise 19: Rewrite each sentence so that it is closest in meaning to the original one.",
+                question: "Viết lại câu tương đương: <b>\"The market is older than the shopping centre.\"</b><br>🡲 The shopping centre _____________",
+                options: [
+                    { text: "is more modern than the market.", isCorrect: true },
+                    { text: "is older than the market.", isCorrect: false },
+                    { text: "is moderner than the market.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Tính từ trái nghĩa: old (cổ kính, cũ) ➔ modern (hiện đại). Modern là tính từ dài gồm 2 âm tiết.",
+                    translation: "Trung tâm thương mại thì hiện đại hơn chợ.",
+                    whyCorrect: "Biến đổi sang tính từ trái nghĩa dạng dài bằng cách thêm từ bổ trợ 'more modern than'.",
+                    whyWrong: "'moderner' không được chấp nhận trong ngữ pháp tiêu chuẩn."
+                }
+            },
+            {
+                exTitle: "Exercise 19: Rewrite each sentence so that it is closest in meaning to the original one.",
+                question: "Viết lại câu tương đương: <b>\"The food here is worse than my cooking.\"</b><br>🡲 My cooking _____________",
+                options: [
+                    { text: "is better than the food here.", isCorrect: true },
+                    { text: "is badder than the food here.", isCorrect: false },
+                    { text: "is gooder than the food here.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Tính từ bất quy tắc đặc biệt: bad/worse trái nghĩa hoàn toàn với good/better.",
+                    translation: "Đồ ăn tôi nấu thì ngon hơn đồ ăn ở đây.",
+                    whyCorrect: "Biến đổi hình thái bất quy tắc của 'worse' ngược lại thành 'better' vô cùng điêu luyện.",
+                    whyWrong: "Từ 'badder' hay 'gooder' là các dạng từ sai ngữ pháp nặng."
+                }
+            },
+            {
+                exTitle: "Exercise 19: Rewrite each sentence so that it is closest in meaning to the original one.",
+                question: "Viết lại câu tương đương: <b>\"My computer is newer than my mobile phone.\"</b><br>🡲 My mobile phone _____________",
+                options: [
+                    { text: "is older than my computer.", isCorrect: true },
+                    { text: "is more new than my computer.", isCorrect: false },
+                    { text: "is newer than my computer.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Tính từ trái nghĩa niên hạn: new (mới) ➔ old (cũ).",
+                    translation: "Điện thoại di động của tớ thì cũ hơn máy tính của tớ.",
+                    whyCorrect: "Sử dụng tính từ ngắn trái nghĩa 'older than' khi đối tượng so sánh bị hoán đổi.",
+                    whyWrong: "Giữ nguyên tính từ 'newer' làm sai lệch bản chất ngữ nghĩa câu gốc."
+                }
+            },
+            {
+                exTitle: "Exercise 19: Rewrite each sentence so that it is closest in meaning to the original one.",
+                question: "Viết lại câu tương đương: <b>\"A town house is more modern than a country house.\"</b><br>🡲 A country house _____________",
+                options: [
+                    { text: "is older than a town house.", isCorrect: true },
+                    { text: "is less modern than a town house.", isCorrect: true }, // Cả 2 đều đúng, ưu tiên đáp án đề thi thường dùng
+                    { text: "is more modern than a town house.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Có thể dùng tính từ ngắn trái nghĩa 'older' hoặc cấu trúc so sánh kém 'less modern'.",
+                    translation: "Một ngôi nhà ở nông thôn thì cổ kính/ít hiện đại hơn một ngôi nhà ở phố.",
+                    whyCorrect: "Phản ánh chính xác cấu trúc biến đổi tính chất tương đương giữa hai loại hình nhà ở.",
+                    whyWrong: "Giữ nguyên cấu trúc so sánh hơn làm sai lệch thông điệp gốc."
+                }
+            },
+            {
+                exTitle: "Exercise 19: Rewrite each sentence so that it is closest in meaning to the original one.",
+                question: "Viết lại câu tương đương: <b>\"The streets in Ha Noi are noisier than those in Hoi An.\"</b><br>🡲 The streets in Hoi An _____________",
+                options: [
+                    { text: "are quieter than those in Ha Noi.", isCorrect: true },
+                    { text: "are more noisy than those in Ha Noi.", isCorrect: false },
+                    { text: "is quieter than those in Ha Noi.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Tính từ trái nghĩa: noisy (ồn ào) ➔ quiet (yên tĩnh). Dạng so sánh hơn: quieter hoặc more quiet.",
+                    translation: "Đường phố ở Hội An thì yên tĩnh hơn đường phố ở Hà Nội.",
+                    whyCorrect: "Chia động từ số nhiều 'are' hòa hợp với chủ ngữ số nhiều 'The streets'.",
+                    whyWrong: "Dùng sai động từ số ít 'is' phá vỡ sự hòa hợp chủ vị."
+                }
+            },
+            {
+                exTitle: "Exercise 19: Rewrite each sentence so that it is closest in meaning to the original one.",
+                question: "Viết lại câu tương đương: <b>\"Could you show me the way to the post office?\"</b><br>🡲 Could you tell me how _____________",
+                options: [
+                    { text: "to get to the post office?", isCorrect: true },
+                    { text: "getting to the post office?", isCorrect: false },
+                    { text: "to go the post office?", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Cấu trúc hỏi đường song hành: show me the way to = tell me how to get to + N.",
+                    translation: "Bạn có thể cho tôi biết làm thế nào để đi đến bưu điện không?",
+                    whyCorrect: "Sử dụng cấu trúc động từ nguyên mẫu có to 'how + to-V' đóng vai trò tân ngữ.",
+                    whyWrong: "Dùng động từ đuôi tinh giản '-ing' sau từ để hỏi trong trường hợp này là sai cấu trúc."
+                }
+            },
+            {
+                exTitle: "Exercise 19: Rewrite each sentence so that it is closest in meaning to the original one.",
+                question: "Viết lại câu tương đương: <b>\"The cathedral is in front of the art gallery.\"</b><br>🡲 The art gallery _____________",
+                options: [
+                    { text: "is behind the cathedral.", isCorrect: true },
+                    { text: "is next to the cathedral.", isCorrect: false },
+                    { text: "is opposite the cathedral.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Giới từ chỉ vị trí không gian trái ngược nhau: in front of (phía trước) ➔ behind (phía sau).",
+                    translation: "Phòng trưng bày nghệ thuật thì nằm ở phía sau nhà thờ lớn.",
+                    whyCorrect: "Đổi đúng giới từ chỉ vị trí không gian đối lập khi đổi vị trí hai vật thể kiến trúc.",
+                    whyWrong: "Sử dụng các giới từ khác mang nghĩa sai lệch vị trí ban đầu ('next to' - bên cạnh)."
+                }
+            },
+            {
+                exTitle: "Exercise 19: Rewrite each sentence so that it is closest in meaning to the original one.",
+                question: "Viết lại câu tương đương: <b>\"Is there a square in your neighbourhood?\"</b><br>🡲 Does your neighbourhood _____________",
+                options: [
+                    { text: "have a square?", isCorrect: true },
+                    { text: "has a square?", isCorrect: false },
+                    { text: "is a square?", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Chuyển đổi cấu trúc tồn tại sang cấu trúc sở hữu: Is there + N...? ➔ Does + S + have + N...?",
+                    translation: "Khu phố của bạn có quảng trường không?",
+                    whyCorrect: "Khi mượn trợ động từ số ít 'Does', động từ chính bắt buộc phải chuyển về dạng nguyên mẫu 'have'.",
+                    whyWrong: "Giữ nguyên từ chia 'has' là lỗi ngữ pháp cơ bản của câu hỏi nghi vấn."
+                }
+            },
+            {
+                exTitle: "Exercise 19: Rewrite each sentence so that it is closest in meaning to the original one.",
+                question: "Viết lại câu tương đương: <b>\"The Blue hotel is cheaper than the Green Hotel.\"</b><br>🡲 The Green Hotel _____________",
+                options: [
+                    { text: "is more expensive than the Blue Hotel.", isCorrect: true },
+                    { text: "is cheaper than the Blue Hotel.", isCorrect: false },
+                    { text: "is expensiver than the Blue Hotel.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Cặp tính từ trái nghĩa mức độ: cheap (rẻ) ➔ expensive (đắt đỏ).",
+                    translation: "Khách sạn Xanh thì đắt tiền hơn khách sạn Xanh Dương.",
+                    whyCorrect: "Áp dụng cấu trúc so sánh hơn tính từ dài 'more expensive than' chuẩn chỉ.",
+                    whyWrong: "Biến đổi sai hình thái từ thành từ không có thực 'expensiver'."
+                }
+            },
+            {
+                exTitle: "Exercise 19: Rewrite each sentence so that it is closest in meaning to the original one.",
+                question: "Viết lại câu tương đương: <b>\"The square in Hoi An is smaller than the square in Ha Noi.\"</b><br>🡲 The square in Ha Noi _____________",
+                options: [
+                    { text: "is bigger / larger than the square in Hoi An.", isCorrect: true },
+                    { text: "is smaller than the square in Hoi An.", isCorrect: false },
+                    { text: "is more big than the square in Hoi An.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Tính từ ngắn mô tả kích thước đối nghịch: small (nhỏ) ➔ big/large (lớn).",
+                    translation: "Quảng trường ở Hà Nội thì lớn hơn quảng trường ở Hội An.",
+                    whyCorrect: "Sử dụng tính từ ngắn tăng quy mô kích thước và nhân đôi phụ âm thích đáng.",
+                    whyWrong: "Giữ nguyên tính từ cũ hoặc sai cú pháp so sánh tính từ ngắn."
+                }
+            },
+            {
+                exTitle: "Exercise 19: Rewrite each sentence so that it is closest in meaning to the original one.",
+                question: "Viết lại câu tương đương: <b>\"Let's go out and have an ice-cream!\"</b><br>🡲 Shall _____________",
+                options: [
+                    { text: "we go out and have an ice-cream?", isCorrect: true },
+                    { text: "we going out and have an ice-cream?", isCorrect: false },
+                    { text: "we to go out and have an ice-cream?", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Cấu trúc đề xuất đồng nghĩa: Let's + V-inf... = Shall we + V-inf...?",
+                    translation: "Chúng mình đi ra ngoài ăn kem nhé?",
+                    whyCorrect: "Động từ 'go' và 'have' đưa về dạng nguyên mẫu không 'to' đứng sau cấu trúc chủ ngữ.",
+                    whyWrong: "Thêm đuôi '-ing' hoặc giới từ 'to' vào sau động từ khuyết thiếu là sai."
+                }
+            },
+            {
+                exTitle: "Exercise 19: Rewrite each sentence so that it is closest in meaning to the original one.",
+                question: "Viết lại câu tương đương: <b>\"Can you tell us the way to the bus stop?\"</b><br>🡲 How _____________",
+                options: [
+                    { text: "can I/we get to the bus stop?", isCorrect: true },
+                    { text: "to get to the bus stop can you?", isCorrect: false },
+                    { text: "can you tell the way to the bus stop?", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Cấu trúc hỏi đường dùng từ để hỏi: How can I/we get to + nơi chốn?",
+                    translation: "Làm thế nào để chúng tôi có thể đi đến trạm dừng xe buýt vậy?",
+                    whyCorrect: "Tái cấu trúc câu hỏi đường bằng trạng từ nghi vấn phương thức hành động 'How'.",
+                    whyWrong: "Xáo trộn trật từ cú pháp hoặc lặp từ không đúng logic ngữ pháp."
+                }
+            },
+            {
+                exTitle: "Exercise 19: Rewrite each sentence so that it is closest in meaning to the original one.",
+                question: "Viết lại câu tương đương: <b>\"Our neighbourhood is quieter than your neighbourhood.\"</b><br>🡲 Your neighbourhood _____________",
+                options: [
+                    { text: "is noisier than our neighbourhood.", isCorrect: true },
+                    { text: "is more quiet than our neighbourhood.", isCorrect: false },
+                    { text: "is quieter than our neighbourhood.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Tính từ trái nghĩa: quiet (yên tĩnh) ➔ noisy (ồn ào). Cách chuyển đổi đuôi: noisy ➔ noisier.",
+                    translation: "Khu phố của bạn thì ồn ào hơn khu phố của chúng tớ.",
+                    whyCorrect: "Sử dụng tính từ ngắn trái nghĩa biến đổi y dài thành i ngắn rồi thêm đuôi '-er'.",
+                    whyWrong: "Làm ngược nghĩa của câu văn gốc ban đầu."
+                }
+            },
+
+            /* EXERCISE 20 */
+            {
+                exTitle: "Exercise 20: Mark the letter A, B, C or D to indicate the correct arrangement of the sentences to make a meaningful paragraph/letter.",
+                question: "❶ Chọn thứ tự đúng nhất của các câu (a-f) để tạo thành bức thư mời hoàn chỉnh:<br><div style='padding:10px; background:#F8F9FA; border-radius:10px; font-size:14px; line-height:1.5;'><b>Dear Brian,</b><br>a. We can play football at the park, and then we can get some ice cream from the new shop.<br>b. I hope you're doing well.<br>c. How are you?<br>d. I hope you can come!<br>e. I'm writing to invite you to my neighborhood this Saturday.<br>f. After that, we can just hang out at my house and play some games.<br><b>See you soon, / Ally</b></div>",
+                options: [
+                    { text: "A. c - b - e - a - f - d", isCorrect: true },
+                    { text: "B. b - c - a - e - f - d", isCorrect: false },
+                    { text: "C. e - a - f - d - b - c", isCorrect: false },
+                    { text: "D. c - b - e - f - a - d", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Logic viết thư: Chào hỏi sức khỏe (c, b) ➔ Lý do mời (e) ➔ Hoạt động thứ nhất (a) ➔ Hoạt động tiếp nối bằng từ liên kết 'After that' (f) ➔ Lời chúc cuối thư (d).",
+                    translation: "Cậu khỏe không? Tớ hy vọng cậu ổn. Tớ viết thư mời cậu qua chơi... Kế hoạch là...",
+                    whyCorrect: "Sắp xếp tuần tự tạo nên tính liên kết văn bản cực kỳ chặt chẽ và mạch lạc.",
+                    whyWrong: "Các phương án khác đảo lộn hành động trước khi có lời mời chính thức."
+                }
+            },
+            {
+                exTitle: "Exercise 20: Mark the letter A, B, C or D to indicate the correct arrangement of the sentences to make a meaningful paragraph/letter.",
+                question: "❷ Sắp xếp các câu (a-e) thành một đoạn văn đánh giá cửa hàng thể thao hợp lý nhất:<br><div style='padding:10px; background:#F8F9FA; border-radius:10px; font-size:14px; line-height:1.5;'>a. The staff are also very friendly and helpful, making the shopping experience enjoyable.<br>b. The sports shop in my neighborhood is a fantastic place for everyone who loves sports.<br>c. You can always find what you need there.<br>d. I think it's great because they have a wide variety of equipment for many different activities, from football to swimming.<br>e. In conclusion, I believe this sports shop is a valuable asset to our community...</div>",
+                options: [
+                    { text: "A. b - d - c - a - e", isCorrect: true },
+                    { text: "B. d - c - a - b - e", isCorrect: false },
+                    { text: "C. b - a - d - c - e", isCorrect: false },
+                    { text: "D. a - b - c - d - e", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "In conclusion (Tóm lại): Dấu hiệu nhận biết câu kết đoạn (Concluding sentence), luôn nằm vị trí cuối.",
+                    translation: "Giới thiệu cửa hàng (b) ➔ Đưa lý do đa dạng dụng cụ (d) ➔ Khẳng định sự tiện lợi (c) ➔ Khen nhân viên (a) ➔ Kết luận tổng quan (e).",
+                    whyCorrect: "Đi đúng tiến trình: Topic Sentence ➔ Supporting Sentences ➔ Concluding Sentence.",
+                    whyWrong: "Sắp xếp đảo lộn các câu bổ trợ làm ngắt quãng mạch lập luận tư duy văn bản."
+                }
+            },
+
+            /* EXERCISE 21 */
+            {
+                exTitle: "Exercise 21: Mark the letter A, B, C or D to indicate the correct answer to each of the following questions.",
+                question: "❶ Đặt câu (a-c) theo trật tự logic để điền vào đoạn văn nói về phòng trưng bày nghệ thuật:<br><div style='padding:8px; background:#F8F9FA; border-radius:8px; font-size:13.5px;'>My neighborhood has a lovely small art gallery, and I think it's a wonderful place to visit. It often shows beautiful paintings and sculptures by local artists. [___]. In conclusion, this art gallery is a valuable and beautiful addition to our community, making our area more special.</div><br>a. It's a quiet and calm spot, which makes it perfect for relaxing.<br>b. The artworks are always very colorful and interesting to look at, and I enjoy seeing new pieces regularly.<br>c. There are often special events and workshops held there too.",
+                options: [
+                    { text: "A. b - a - c", isCorrect: true },
+                    { text: "B. a - c - b", isCorrect: false },
+                    { text: "C. c - b - a", isCorrect: false },
+                    { text: "D. b - c - a", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "The artworks (Các tác phẩm nghệ thuật) là danh từ kết nối trực tiếp với từ 'paintings and sculptures' của câu phía trước.",
+                    translation: "Các tác phẩm luôn rực rỡ (b) ➔ Không gian yên tĩnh thư giãn (a) ➔ Có cả các sự kiện chuyên đề (c).",
+                    whyCorrect: "Thứ tự b - a - c tạo nên tính liên kết nhất quán theo mức độ cụ thể đến khái quát không gian.",
+                    whyWrong: "Các phương án khác làm gián đoạn thông tin miêu tả hiện vật đang nói dở."
+                }
+            },
+            {
+                exTitle: "Exercise 21: Mark the letter A, B, C or D to indicate the correct answer to each of the following questions.",
+                question: "❶ Chọn câu phù hợp nhất để <b>KẾT THÚC (END)</b> văn bản về phòng triển lãm nghệ thuật trên một cách tự nhiên:",
+                options: [
+                    { text: "A. So, if you're ever in the area, you should definitely pay it a visit.", isCorrect: true },
+                    { text: "B. The artists sometimes sell their work, which is a nice bonus.", isCorrect: false },
+                    { text: "C. It's truly a place where art lovers can feel at home.", isCorrect: false },
+                    { text: "D. I hope more people discover this hidden gem soon.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Pay it a visit (Ghé qua tham quan): Lời kêu gọi hành động (Call to action) quen thuộc để kết thúc một đoạn văn chia sẻ địa điểm.",
+                    translation: "Vì vậy, nếu bạn có dịp ghé qua khu này, bạn chắc chắn nên tới tham quan.",
+                    whyCorrect: "Mang tính hướng ngoại, tạo cái kết mở tương tác hoàn hảo với độc giả.",
+                    whyWrong: "Các câu khác chỉ mang tính chất liệt kê thêm chi tiết phụ, không có sắc thái kết bài."
+                }
+            },
+            {
+                exTitle: "Exercise 21: Mark the letter A, B, C or D to indicate the correct answer to each of the following questions.",
+                question: "❷ Chọn <b>CÂU CHỦ ĐỀ (TOPIC SENTENCE)</b> thích hợp nhất để mở đầu bài văn:<br><div style='padding:8px; background:#F8F9FA; border-radius:8px; font-size:13.5px;'>[___]. (2) [___]. I enjoy living here because it's always lively and there's always something interesting happening.</div>",
+                options: [
+                    { text: "B. My neighborhood has many interesting features.", isCorrect: true },
+                    { text: "A. Ho Chi Minh City is a very large and dynamic place.", isCorrect: false },
+                    { text: "C. Living in a city has both advantages and disadvantages.", isCorrect: false },
+                    { text: "D. There are many different types of neighborhoods in Vietnam.", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Căn cứ cụm từ ở câu cuối: 'I enjoy living here' (Tôi thích sống ở ĐÂY - chỉ một không gian khu phố cụ thể rộng lớn vừa đủ).",
+                    translation: "Khu phố của tôi có rất nhiều đặc điểm thú vị.",
+                    whyCorrect: "Câu chủ đề khu phố khớp hoàn toàn với toàn bộ các câu bổ trợ mô tả chi tiết công viên, cửa hàng ở phần sau.",
+                    whyWrong: "Phương án khác quá vĩ mô (về cả thành phố lớn hoặc toàn nước Việt Nam) không tương thích."
+                }
+            },
+            {
+                exTitle: "Exercise 21: Mark the letter A, B, C or D to indicate the correct answer to each of the following questions.",
+                question: "❷ Sắp xếp thứ tự các câu (a-c) để điền vào phần thân đoạn văn thứ 2 phía trên:<br><div style='padding:8px; background:#F8F9FA; border-radius:8px; font-size:13.5px;'>a. There's also a nice park... <br>b. It has many small shops... <br>c. The streets are often full of motorbikes...</div>",
+                options: [
+                    { text: "C. b - a - c", isCorrect: true },
+                    { text: "A. a - b - c", isCorrect: false },
+                    { text: "B. c - a - b", isCorrect: false },
+                    { text: "D. a - c - b", isCorrect: false }
+                ],
+                explanation: {
+                    vocab: "Đại từ 'It' ở câu (b) thay thế trực tiếp cho cụm từ 'My neighbourhood' ở câu chủ đề vừa chọn trước đó.",
+                    translation: "Nó có nhiều cửa hàng (b) ➔ Có cả công viên đẹp (a) ➔ Đường phố tấp nập xe cộ (c).",
+                    whyCorrect: "Thứ tự b - a - c giúp các đại từ thay thế và trạng từ bổ sung 'also' phát huy tối đa tính năng liên kết chuỗi câu.",
+                    whyWrong: "Đưa câu có từ bổ trợ 'also' lên trước câu giới thiệu nền tảng làm sai quy luật viết đoạn văn."
+                }
+            }
+        ];
+
+        const CustomAudioSynth = {
+            ctx: null,
+            init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
+            dingCorrect() {
+                this.init(); const now = this.ctx.currentTime;
+                const o1 = this.ctx.createOscillator(); const o2 = this.ctx.createOscillator(); const g = this.ctx.createGain();
+                o1.frequency.setValueAtTime(523.25, now); o2.frequency.setValueAtTime(659.25, now + 0.08);
+                g.gain.setValueAtTime(0.2, now); g.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                o1.connect(g); o2.connect(g); g.connect(this.ctx.destination);
+                o1.start(now); o2.start(now + 0.08); o1.stop(now + 0.4); o2.stop(now + 0.4);
+            },
+            buzzWrong() {
+                this.init(); const now = this.ctx.currentTime;
+                const o = this.ctx.createOscillator(); const g = this.ctx.createGain();
+                o.type = 'sawtooth'; o.frequency.setValueAtTime(180, now);
+                g.gain.setValueAtTime(0.15, now); g.gain.linearRampToValueAtTime(0.01, now + 0.4);
+                o.connect(g); g.connect(this.ctx.destination); o.start(now); o.stop(now + 0.4);
+            }
+        };
+
+        const ConfettiManager = {
+            canvas: null, ctx: null, particles: [],
+            init() {
+                this.canvas = document.getElementById('confetti-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.canvas.width = window.innerWidth; this.canvas.height = window.innerHeight;
+            },
+            fire() {
+                this.init(); this.particles = [];
+                const colors = ['#FF7675', '#FDCB6E', '#00C9A7', '#8854C0', '#00D26A'];
+                for (let i = 0; i < 60; i++) {
+                    this.particles.push({
+                        x: window.innerWidth / 2, y: window.innerHeight / 2 - 50,
+                        vx: (Math.random() - 0.5) * 14, vy: (Math.random() - 0.7) * 16,
+                        color: colors[Math.floor(Math.random() * colors.length)], radius: Math.random() * 4 + 4, gravity: 0.25
+                    });
+                }
+                this.renderLoop();
+            },
+            renderLoop() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                let alive = false;
+                this.particles.forEach(p => {
+                    p.x += p.vx; p.y += p.vy; p.vy += p.gravity;
+                    this.ctx.beginPath(); this.ctx.fillStyle = p.color;
+                    this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); this.ctx.fill();
+                    if (p.y < this.canvas.height) alive = true;
+                });
+                if (alive) requestAnimationFrame(() => this.renderLoop());
+            }
+        };
+
+        const sessionAnswers = {};
+
+        function buildQuizInterface() {
+            const root = document.getElementById('quiz-root');
+            root.innerHTML = "";
+            let currentBannerText = "";
+
+            rawQuizDatabase.forEach((q, idx) => {
+                if (q.exTitle !== currentBannerText) {
+                    currentBannerText = q.exTitle;
+                    const banner = document.createElement('div');
+                    banner.className = "exercise-title-banner";
+                    banner.innerText = currentBannerText;
+                    root.appendChild(banner);
+                }
+
+                const card = document.createElement('div');
+                card.className = "question-card";
+                card.id = `card-block-${idx}`;
+
+                let cardHeader = `
+                    <div class="question-header"><span class="q-badge">Câu ${idx + 1}</span></div>
+                    <div class="q-text">${q.question}</div>
+                `;
+
+                let optionsLayout = `<div class="options-grid" id="grid-box-${idx}">`;
+                q.options.forEach((opt, oIdx) => {
+                    const letters = ["A", "B", "C", "D"];
+                    optionsLayout += `
+                        <button class="option-btn" data-correct="${opt.isCorrect}" onclick="checkSelectedOption(this, ${idx}, ${opt.isCorrect})">
+                            <strong>${letters[oIdx]}.</strong> &nbsp;${opt.text}
+                        </button>
+                    `;
+                });
+                optionsLayout += `</div>`;
+
+                let explanationLayout = `
+                    <div class="explanation-box" id="exp-box-${idx}">
+                        <div class="exp-title">👑 GIẢI THÍCH NGỮ PHÁP TỪ MS LÊ HẰNG:</div>
+                        <div class="exp-section"><strong>✨ Phân tích:</strong> ${q.explanation.vocab}</div>
+                        <div class="exp-section"><strong>🔮 Dịch nghĩa:</strong> ${q.explanation.translation}</div>
+                        <div class="exp-section"><strong>💚 Vì sao ĐÚNG:</strong> ${q.explanation.whyCorrect}</div>
+                        <div class="exp-section"><strong>❤️ Phân tích bẫy SAI:</strong> ${q.explanation.whyWrong}</div>
+                    </div>
+                `;
+
+                card.innerHTML = cardHeader + optionsLayout + explanationLayout;
+                root.appendChild(card);
+            });
+        }
+
+        function checkSelectedOption(selectedBtn, qIdx, isCorrect) {
+            if (sessionAnswers[qIdx] !== undefined) return;
+            sessionAnswers[qIdx] = isCorrect;
+
+            const grid = document.getElementById(`grid-box-${qIdx}`);
+            const allButtons = grid.querySelectorAll('.option-btn');
+
+            if (isCorrect) {
+                selectedBtn.classList.add('correct');
+                CustomAudioSynth.dingCorrect();
+                ConfettiManager.fire();
+            } else {
+                selectedBtn.classList.add('wrong');
+                CustomAudioSynth.buzzWrong();
+                allButtons.forEach(btn => {
+                    if (btn.getAttribute('data-correct') === 'true') btn.classList.add('correct');
+                });
+            }
+
+            allButtons.forEach(btn => btn.classList.add('disabled'));
+            document.getElementById(`exp-box-${qIdx}`).style.display = 'block';
+        }
+
+        function evaluateQuizTotal() {
+            const total = rawQuizDatabase.length;
+            let correct = 0; let missing = 0;
+
+            for (let i = 0; i < total; i++) {
+                if (sessionAnswers[i] === undefined) missing++;
+                else if (sessionAnswers[i] === true) correct++;
+            }
+
+            if (missing > 0) {
+                alert(`Học sinh ơi, còn ${missing} câu con chưa làm kìa! Hãy hoàn thiện hết rồi nộp bài nhé!`);
+                return;
+            }
+
+            const rate = (correct / total) * 100;
+            let comment = "";
+            if (rate < 50) comment = "Con cần xem kỹ lại lý thuyết so sánh hơn và đọc kỹ giải thích từng câu để cải thiện nhé!";
+            else if (rate >= 50 && rate < 85) comment = "Kết quả khá tốt! Con đã nắm được các cấu trúc cơ bản, chú ý thêm bẫy đại từ thay thế nhé!";
+            else comment = "Xuất sắc! Con có tư duy ngữ pháp rất nhạy bén, không hề bị lừa bởi các câu hỏi logic sắp xếp đoạn văn!";
+
+            document.getElementById('modalScoreText').innerText = `${correct} / ${total}`;
+            document.getElementById('modalCommentText').innerHTML = `<strong>Lời nhắn từ cô Lê Hằng:</strong><br>"${comment}"`;
+            document.getElementById('scoreModal').style.display = 'flex';
+
+            if (rate >= 80) { ConfettiManager.fire(); }
+        }
+
+        function resetQuizAndRestart() {
+            document.getElementById('scoreModal').style.display = 'none';
+            for (let key in sessionAnswers) delete sessionAnswers[key];
+            buildQuizInterface();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.onload = buildQuizInterface;
+    </script>
+</body>
+</html>
